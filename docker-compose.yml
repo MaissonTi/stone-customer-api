@@ -1,0 +1,31 @@
+version: '3'
+services:
+  customer-api:
+    build: .
+    container_name: customer-api
+    restart: always
+    environment:
+      SSO_URL: ${SSO_URL}
+      SSO_CLIENT_ID: ${SSO_CLIENT_ID}
+      SSO_CLIENT_USERNAME: ${SSO_CLIENT_USERNAME}
+      SSO_CLIENT_SECRET: ${SSO_CLIENT_SECRET}
+      REDIS_HOST: host.docker.internal
+      REDIS_PORT: ${REDIS_PORT}
+    depends_on:
+      - redis
+    volumes:
+      - .:/usr/src/app
+    ports:
+      - ${APP_PORT}:3000
+    command: npm start
+
+  redis:
+    container_name: redis
+    image: redis
+    volumes:
+      - redis:/data
+    ports:
+      - ${REDIS_PORT}:6379
+volumes:
+  redis:
+    driver: local
